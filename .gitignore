@@ -1,0 +1,6 @@
+build/**
+out/**
+*.vsix
+node_modules/**
+.eslintrc.json
+.vscode/**
