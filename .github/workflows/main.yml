@@ -1,0 +1,67 @@
+name: Build Extension
+on:
+  workflow_dispatch:
+    inputs:
+      custom_message:
+        description: 'Build os-specific vsix files'
+        required: false
+        default: 'No message'
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - run: |
+          python -m ensurepip --upgrade
+          python -m pip install --upgrade pip setuptools wheel
+
+      - run: npm install
+
+      - run: npm install -g vsce
+
+      - run: vsce package --target linux-x64
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - run: vsce package --target linux-arm64
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - run: vsce package --target linux-armhf
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - run: vsce package --target win32-x64
+        if: ${{ matrix.os == 'windows-latest' }}
+      - run: vsce package --target win32-arm64
+        if: ${{ matrix.os == 'windows-latest' }}
+      - run: vsce package --target darwin-x64
+        if: ${{ matrix.os == 'macos-latest' }}
+      - run: vsce package --target darwin-arm64
+        if: ${{ matrix.os == 'macos-latest' }}
+
+      - name: Upload linux extension packages
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-extension-packages
+          path: "foam-language-client-linux*.vsix"
+      - name: Upload windows extension packages
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-extension-packages
+          path: "foam-language-client-win*.vsix"
+      - name: Upload macos extension packages
+        if: ${{ matrix.os == 'macos-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: darwin-extension-packages
+          path: "foam-language-client-darwin*.vsix"
