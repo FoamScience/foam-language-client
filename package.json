@@ -2,7 +2,7 @@
     "name": "foam-language-client",
     "displayName": "OpenFOAM Language Client",
     "description": "A Language Client for the OpenFOAM LSP server",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "preview": "true",
     "publisher": "Elwardi",
     "icon": "icon.png",
@@ -41,7 +41,7 @@
         ]
     },
     "dependencies": {
-        "foam-language-server": "^0.3.4",
+        "foam-language-server": "^0.3.5",
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {
